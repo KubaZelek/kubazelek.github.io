@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Inputs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      transition: background-color 0.1s ease;
+    }
+    .input-container {
+      margin-bottom: 20px;
+    }
+    .letter-input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+    .validate-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .validate-button:hover {
+      background-color: #45a049;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+      opacity: 0;
+      position: relative;
+      animation: fadeInDown 1s forwards;
+    }
+    .hidden {
+      display: none;
+    }
+    .countdown {
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="input-container">
+    <input type="text" maxlength="1" class="letter-input" id="input1" placeholder="_">
+    <input type="text" maxlength="1" class="letter-input" id="input2" placeholder="_">
+    <input type="text" maxlength="1" class="letter-input" id="input3" placeholder="_">
+    <input type="text" maxlength="1" class="letter-input" id="input4" placeholder="_">
+    <input type="text" maxlength="1" class="letter-input" id="input5" placeholder="_">
+  </div>
+  <button class="validate-button" id="validateButton">Validate</button>
+  <div id="message" class="message hidden">Brawo. Dałaś radę. Oczekuj.</div>
+  <div id="countdown" class="message countdown hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    const inputs = document.querySelectorAll('.letter-input');
+    const messageDiv = document.getElementById('message');
+    const countdownDiv = document.getElementById('countdown');
+    const validateButton = document.getElementById('validateButton');
+
+    validateButton.addEventListener('click', () => {
+      checkInputs();
+    });
+
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        input.value = input.value.toUpperCase();
+      });
+    });
+
+    function checkInputs() {
+      const userInput = Array.from(inputs).map(input => input.value).join('');
+
+      if (userInput === 'LAPPI') {
+        showConfetti(); // Trigger confetti
+        messageDiv.classList.remove('hidden');
+        messageDiv.textContent = 'Brawo. Nawet nie wiesz, jak jestem z Ciebie dumny. Dotarłaś do finału. Kocham Cię i oczekuj na niego:)';
+        setTimeout(() => {
+          startCountdown();
+        }, 2000);
+      } else if (userInput === 'ODSSL') {
+        countdownDiv.textContent = '';
+        countdownDiv.classList.add('hidden');
+        messageDiv.textContent = "Use the letter from J. C. to decode the letters";
+        messageDiv.classList.remove('hidden');
+      }
+      else if (userInput === 'ĘVJJB'){
+        countdownDiv.textContent = '';
+        countdownDiv.classList.add('hidden');
+        messageDiv.textContent = "In what language was the letter written in? Maybe try the decoder in that language...";
+        messageDiv.classList.remove('hidden');
+      }
+      else {
+        messageDiv.textContent = '';
+        countdownDiv.textContent = '';
+        messageDiv.classList.add('hidden');
+        countdownDiv.classList.add('hidden');
+        document.body.style.backgroundColor = 'red';
+        setTimeout(() => {
+          document.body.style.backgroundColor = '';
+        }, 500);
+      }
+    }
+
+    function showConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      // Optionally, trigger multiple bursts
+      setTimeout(() => confetti({ particleCount: 150, spread: 90, origin: { y: 0.7 } }), 500);
+      setTimeout(() => confetti({ particleCount: 200, spread: 100, origin: { y: 0.8 } }), 1000);
+    }
+    function showRed(){
+      
+    }
+    function startCountdown() {
+      countdownDiv.classList.remove('hidden');
+      const targetDate = new Date('March 10, 2025 12:00:00').getTime();
+
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance <= 0) {
+          clearInterval(interval);
+          countdownDiv.textContent = 'The time has arrived!';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownDiv.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
